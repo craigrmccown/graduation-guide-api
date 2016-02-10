@@ -5,3 +5,10 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+def create(model, data)
+  model.create! data unless model.exists? data[:id]
+end
+
+create Role, id: 0, name: 'admin'
+create Role, id: 1, name: 'student'

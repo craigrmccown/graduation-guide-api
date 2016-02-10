@@ -1,0 +1,30 @@
+class User < ActiveRecord::Base
+  include JsonSupport
+  include BCrypt
+
+  json_exclude :encrypted_password
+
+  validates :email, format: { with: /\A.+@.+\z/, message: 'must supply a valid email' }
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :encrypted_password, presence: true
+
+  has_and_belongs_to_many :roles
+
+  def password=(plaintext)
+    self.encrypted_password = Password.create(plaintext, :cost => 5).to_s
+  end 
+
+  def has_matching_password?(plaintext)
+    Password.new(encrypted_password) == plaintext
+  end 
+
+  def has_role?(role)
+    roles.where(id: role.id).any?
+  end
+
+  def create_with_role!(role)
+    roles << Role[role]
+    save!
+  end
+end
