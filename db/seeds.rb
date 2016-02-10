@@ -13,4 +13,6 @@ end
 create Role, id: 0, name: 'admin'
 create Role, id: 1, name: 'student'
 create Major, id: 0, name: 'Computer Science', description: 'Georgia Tech computer science major'
-create Major, id: 0, name: 'Electrical Engineering', description: 'Georgia Tech electrical engineering major'
+create Major, id: 1, name: 'Electrical Engineering', description: 'Georgia Tech electrical engineering major'
+create Minor, id: 0, name: 'Biology', description: 'Georgia Tech Biology major'
+create Minor, id: 1, name: 'Music', description: 'Georgia Tech Music major'

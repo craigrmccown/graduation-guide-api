@@ -9,7 +9,11 @@ class Ability
     end
 
     if user.has_role? Role[:student]
-      can :manage, Major
+      can :whoami, User
+      can :add_majors, User
+      can :add_minors, User
+      can :get_all, Major
+      can :get_all, Minor
     end 
   end
 end
