@@ -9,5 +9,6 @@ Rails.application.routes.draw do
   get 'majors' => 'major#get_all'
   get 'majors/:id/tracks' => 'track#get_by_major'
   get 'minors' => 'minor#get_all'
+  get 'courses' => 'course#get_all_for_user'
   match '*path', to: 'application#missing_endpoint', via: :all
 end

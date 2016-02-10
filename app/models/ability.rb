@@ -16,6 +16,7 @@ class Ability
       can :get_all, Major
       can :get_all, Minor
       can :get_by_major, Track
+      can :get_all_for_user, Course
     end 
   end
 end
