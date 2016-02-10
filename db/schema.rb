@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160210185453) do
+ActiveRecord::Schema.define(version: 20160210193930) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,21 @@ ActiveRecord::Schema.define(version: 20160210185453) do
     t.integer "user_id", null: false
   end
 
+  create_table "tracks", force: :cascade do |t|
+    t.integer  "major_id",    null: false
+    t.string   "name",        null: false
+    t.string   "description", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "tracks_users", force: :cascade do |t|
+    t.integer "track_id", null: false
+    t.integer "user_id",  null: false
+  end
+
+  add_index "tracks_users", ["user_id", "track_id"], name: "index_tracks_users_on_user_id_and_track_id", unique: true, using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email",              null: false
     t.string   "encrypted_password", null: false
@@ -68,4 +83,7 @@ ActiveRecord::Schema.define(version: 20160210185453) do
   add_foreign_key "minors_users", "users"
   add_foreign_key "roles_users", "roles"
   add_foreign_key "roles_users", "users"
+  add_foreign_key "tracks", "majors"
+  add_foreign_key "tracks_users", "tracks"
+  add_foreign_key "tracks_users", "users"
 end
