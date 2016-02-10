@@ -11,10 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160210171545) do
+ActiveRecord::Schema.define(version: 20160210180531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "majors", force: :cascade do |t|
+    t.string   "name",        null: false
+    t.string   "description", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "majors_users", force: :cascade do |t|
+    t.integer "major_id", null: false
+    t.integer "user_id",  null: false
+  end
+
+  add_index "majors_users", ["user_id", "major_id"], name: "index_majors_users_on_user_id_and_major_id", unique: true, using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string "name", null: false
@@ -34,6 +48,8 @@ ActiveRecord::Schema.define(version: 20160210171545) do
     t.datetime "updated_at",         null: false
   end
 
+  add_foreign_key "majors_users", "majors"
+  add_foreign_key "majors_users", "users"
   add_foreign_key "roles_users", "roles"
   add_foreign_key "roles_users", "users"
 end

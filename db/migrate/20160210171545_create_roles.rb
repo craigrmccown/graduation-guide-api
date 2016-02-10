@@ -11,5 +11,6 @@ class CreateRoles < ActiveRecord::Migration
 
     add_foreign_key :roles_users, :roles
     add_foreign_key :roles_users, :users
+    add_index :roles_users, [:user_id, :role_id], unique: true
   end
 end
