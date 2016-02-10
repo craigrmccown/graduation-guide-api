@@ -47,3 +47,4 @@ end
 
 gem 'pg'
 gem 'cancancan'
+gem 'bcrypt'

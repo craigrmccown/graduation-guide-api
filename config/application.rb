@@ -6,6 +6,30 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+class SnakeCaseBody
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    params = env['action_dispatch.request.request_parameters']
+
+    if params.nil?
+      query_string = env['QUERY_STRING']
+
+      if !query_string.nil?
+        parsed = Rack::Utils.parse_nested_query(query_string)
+        parsed.deep_transform_keys! { |k| k.underscore }
+        env['QUERY_STRING'] = parsed.to_query
+      end
+    else
+      params.deep_transform_keys! { |k| k.underscore }
+    end
+
+    @app.call env
+  end
+end
+
 module GraduationGuideApi
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
@@ -22,5 +46,6 @@ module GraduationGuideApi
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+    config.middleware.insert_after ActionDispatch::ParamsParser, SnakeCaseBody
   end
 end

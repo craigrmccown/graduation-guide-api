@@ -1,18 +1,18 @@
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
-
   attr_accessor :current_user
   before_action :authenticate!
   skip_before_action :authenticate!, only: [:missing_endpoint]
+
+  rescue_from StandardError do |e|
+    render json: { message: ([e.class.name, e.message] + e.backtrace).join(',') }, status: :internal_server_error
+  end
 
   rescue_from CanCan::AccessDenied do |e|
     render json: { message: 'you do not have sufficient roles to perform this action' }, status: :forbidden
   end
 
-  rescue_from StandardError do |e|
-    render json: { message: ([e.message] + e.backtrace).join(',') }, status: :internal_server_error
+  rescue_from ActiveRecord::RecordInvalid do |e|
+    render json: { message: e.message }, status: :bad_request
   end
 
   rescue_from UnauthorizedError do |e|

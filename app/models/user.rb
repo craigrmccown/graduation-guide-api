@@ -23,8 +23,8 @@ class User < ActiveRecord::Base
     roles.where(id: role.id).any?
   end
 
-  def create_with_role!(role)
-    roles << Role[role]
+  def create_student!
+    roles << Role[:student]
     save!
   end
 end
