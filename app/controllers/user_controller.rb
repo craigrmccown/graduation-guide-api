@@ -13,7 +13,7 @@ class UserController < ApplicationController
   end
 
   def whoami
-    render json: current_user.as_json(include: [:majors, :minors])
+    render json: current_user.as_json(include: [:majors, :minors, :tracks])
   end
 
   def add_majors
