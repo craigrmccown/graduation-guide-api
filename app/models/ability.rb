@@ -5,10 +5,11 @@ class Ability
     user ||= User.new
     
     if user.has_role? Role[:admin]
-        can :manage, :all
+      can :manage, :all
     end
 
     if user.has_role? Role[:student]
+      can :manage, Major
     end 
   end
 end

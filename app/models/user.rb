@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   validates :encrypted_password, presence: true
 
   has_and_belongs_to_many :roles
+  has_and_belongs_to_many :majors
 
   def password=(plaintext)
     self.encrypted_password = Password.create(plaintext, :cost => 5).to_s
