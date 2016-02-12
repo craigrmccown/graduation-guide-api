@@ -1,6 +1,8 @@
 class Major < ActiveRecord::Base
   include JsonSupport
 
+  json_nest :tracks
+
   validates :name, presence: true
   validates :description, presence: true
 

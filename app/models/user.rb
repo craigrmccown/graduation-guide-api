@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   include BCrypt
 
   json_exclude :encrypted_password
+  json_nest :roles, :majors, :tracks, :minors
 
   validates :email, format: { with: /\A.+@.+\z/, message: 'must supply a valid email' }
   validates :first_name, presence: true
