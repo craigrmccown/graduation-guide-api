@@ -17,8 +17,7 @@ class UserController < ApplicationController
   end
 
   def add_majors
-    request_body = [] unless params[:_json]
-    major_ids = request_body.map { |major_data| major_data[:id] } 
+    major_ids = params[:_json].map { |major_data| major_data[:id] } 
     majors = Major.find major_ids
     current_user.majors.destroy_all
     current_user.majors << majors
@@ -27,8 +26,7 @@ class UserController < ApplicationController
   end
 
   def add_minors
-    request_body = [] unless params[:_json]
-    minor_ids = request_body.map { |minor_data| minor_data[:id] }
+    minor_ids = params[:_json].map { |minor_data| minor_data[:id] }
     minors = Minor.find minor_ids
     current_user.minors.destroy_all
     current_user.minors << minors
@@ -38,8 +36,7 @@ class UserController < ApplicationController
 
   def add_tracks
     # TODO enforce only adding tracks from current majors
-    request_body = [] unless params[:_json]
-    track_ids = request_body.map { |track_data| track_data[:id] }
+    track_ids = params[:_json].map { |track_data| track_data[:id] }
     tracks = Track.find track_ids
     current_user.tracks.destroy_all
     current_user.tracks << tracks
