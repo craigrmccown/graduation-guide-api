@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
     raise UnauthorizedError, "you must be logged in to perform this action" if auth_data.nil?
 
     @current_user = User.find_by(id: auth_data['id'])
-    raise UnauthorizedError, "logged in user does not exist" if current_user.nil?
+    raise UnauthorizedError, "logged in user does noXt exist" if current_user.nil?
   end
 
   def authorize_user!
