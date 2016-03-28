@@ -13,23 +13,23 @@ end
 
 def get_majors(semester="spring2016")
     request = @uri = "/#{semester}"
-    response = JSON.parse(Net:HTTP.get_response(request))
+    response = JSON.parse(Net::HTTP.get_response(request).body)
     return response
 end
 
 def get_courses(major="CS", semester="spring2016")
     request = @uri = "/#{semester}/#{major}"
-    response = JSON.parse(Net:HTTP.get_response(request))
+    response = JSON.parse(Net::HTTP.get_response(request).body)
     return response
 end
 
 def get_course_info(major="CS", course, semester="spring2016")
     request = @uri + "/#{semester}/#{major}/#{courseNo}"
-    response = JSON.parse(Net:HTTP.get_response(request))
+    response = JSON.parse(Net:HTTP.get_response(request).body)
     return response
 end
 
-@uri = URI.parse(grouch_endpoint)
+@uri = URI.parse($grouch_endpoint)
 
 i = 0
 
