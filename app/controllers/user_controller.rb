@@ -35,12 +35,16 @@ class UserController < ApplicationController
   end
 
   def add_tracks
-    # TODO enforce only adding tracks from current majors
     track_ids = params[:_json].map { |track_data| track_data[:id] }
+    curr_major_tracks = Tracks.get_by_major current_user.major
     tracks = Track.find track_ids
-    current_user.tracks.destroy_all
-    current_user.tracks << tracks
-    current_user.save!
-    render json: { message: 'successfully added tracks' }
+    
+    if (tracks - curr_major_tracks).empty?
+      current_user.tracks.destroy_all
+      current_user.tracks << tracks
+      current_user.save!
+      render json: { message: 'successfully added tracks' }
+    end 
+    else render json: { message: 'track doesn\'t belong to user\'s current major' }
   end
 end
