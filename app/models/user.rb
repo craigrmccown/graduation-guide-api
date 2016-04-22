@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :majors
   has_and_belongs_to_many :minors
   has_and_belongs_to_many :tracks
+  has_and_belongs_to_many :courses
 
   def password=(plaintext)
     self.encrypted_password = Password.create(plaintext, :cost => 5).to_s

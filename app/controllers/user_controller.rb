@@ -17,34 +17,40 @@ class UserController < ApplicationController
   end
 
   def add_majors
-    major_ids = params[:_json].map { |major_data| major_data[:id] } 
+    major_ids = params[:_json].collect { |major_data| major_data[:id] } 
     majors = Major.find major_ids
     current_user.majors.destroy_all
     current_user.majors << majors
-    current_user.save!
     render json: { message: 'successfully added majors' }
   end
 
   def add_minors
-    minor_ids = params[:_json].map { |minor_data| minor_data[:id] }
+    minor_ids = params[:_json].collect { |minor_data| minor_data[:id] }
     minors = Minor.find minor_ids
     current_user.minors.destroy_all
     current_user.minors << minors
-    current_user.save!
     render json: { message: 'successfully added minors' }
   end
 
   def add_tracks
-    track_ids = params[:_json].map { |track_data| track_data[:id] }
-    curr_major_tracks = Tracks.get_by_major current_user.major
+    track_ids = params[:_json].collect { |track_data| track_data[:id] }
+    major_track_ids = Tracks.get_by_major(current_user.majors).collect { |track| track.id }
+    track_ids = major_track_ids & track_ids
     tracks = Track.find track_ids
     
-    if (tracks - curr_major_tracks).empty?
+    if tracks.length.eql? track_ids.length
       current_user.tracks.destroy_all
       current_user.tracks << tracks
-      current_user.save!
       render json: { message: 'successfully added tracks' }
-    end 
-    else render json: { message: 'track doesn\'t belong to user\'s current major' }
+    else
+      render json: { message: 'only tracks part of your selected majors allowed' }, status: 400
+  end
+
+  def add_courses
+    course_ids = params[:_json].collect { |course_data| course_data[:id] }
+    courses = Course.find course_ids
+    current_user.courses.destroy_all
+    current_user.courses << courses
+    render json: { message: 'successfully added courses' }
   end
 end
