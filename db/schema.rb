@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160210214406) do
+ActiveRecord::Schema.define(version: 20160422193516) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20160210214406) do
     t.string   "grouch_data", null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "prereq_id"
   end
 
   create_table "courses_majors", force: :cascade do |t|
@@ -37,6 +38,11 @@ ActiveRecord::Schema.define(version: 20160210214406) do
   end
 
   add_index "courses_minors", ["course_id", "minor_id"], name: "index_courses_minors_on_course_id_and_minor_id", unique: true, using: :btree
+
+  create_table "courses_prereqs", force: :cascade do |t|
+    t.integer "prereq_id", null: false
+    t.integer "course_id", null: false
+  end
 
   create_table "courses_tracks", force: :cascade do |t|
     t.integer "course_id", null: false
@@ -73,6 +79,13 @@ ActiveRecord::Schema.define(version: 20160210214406) do
 
   add_index "minors_users", ["user_id", "minor_id"], name: "index_minors_users_on_user_id_and_minor_id", unique: true, using: :btree
 
+  create_table "prereqs", force: :cascade do |t|
+    t.integer  "parent_id",  null: false
+    t.string   "type",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "name", null: false
   end
@@ -108,16 +121,20 @@ ActiveRecord::Schema.define(version: 20160210214406) do
     t.datetime "updated_at",         null: false
   end
 
+  add_foreign_key "courses", "prereqs"
   add_foreign_key "courses_majors", "courses"
   add_foreign_key "courses_majors", "majors"
   add_foreign_key "courses_minors", "courses"
   add_foreign_key "courses_minors", "minors"
+  add_foreign_key "courses_prereqs", "courses"
+  add_foreign_key "courses_prereqs", "prereqs"
   add_foreign_key "courses_tracks", "courses"
   add_foreign_key "courses_tracks", "tracks"
   add_foreign_key "majors_users", "majors"
   add_foreign_key "majors_users", "users"
   add_foreign_key "minors_users", "minors"
   add_foreign_key "minors_users", "users"
+  add_foreign_key "prereqs", "prereqs", column: "parent_id"
   add_foreign_key "roles_users", "roles"
   add_foreign_key "roles_users", "users"
   add_foreign_key "tracks", "majors"

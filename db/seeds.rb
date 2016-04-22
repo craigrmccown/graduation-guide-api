@@ -11,15 +11,32 @@ def safe_create(model)
 end
 
 # Transforms grouch data into usable format
-def transform_prereq(data)
-  courses = data['courses']
+def resolve_prereqs(courses)
+  f_zero = File.open('data/zero.txt', 'w')
+  f_one = File.open('data/one.txt', 'w')
+  f_two = File.open('data/two.txt', 'w')
+  f_plus = File.open('data/plus.txt', 'w')
 
-  if courses.length == 1
-    puts 'equals 1'
-  elsif courses.length == 2
-    puts 'equals 2'
-  else
-    puts 'over 2'
+  begin
+    courses.each do |course|
+      grouch_data = JSON.parse course.grouch_data
+      prereq_data = grouch_data['prerequisites']
+
+      if prereq_data.nil?
+        f_zero.puts "0: #{course.name}"
+      elsif prereq_data['courses'].length == 1
+        f_one.puts "1: #{course.name}, #{prereq_data}"
+      elsif prereq_data['courses'].length == 2
+        f_two.puts "2: #{course.name}, #{prereq_data}"
+      else
+        f_plus.puts "3+: #{course.name}, #{prereq_data}"
+      end
+    end
+  ensure
+    f_zero.close
+    f_one.close
+    f_two.close
+    f_plus.close
   end
 end
 
@@ -44,11 +61,7 @@ new_course_ids.each do |course_id|
 end
 
 # Resolve prereqs
-courses = Course.all
-courses.each do |course|
-  course_data = JSON.parse course.grouch_data
-  prereq_data = course_data['prerequisites']
-  transform_prereq prereq_data unless prereq_data.nil?
-end
+courses = resolve_prereqs(Course.all)
 
 # "prerequisites"=>{"courses"=> ["CS 4641", {"courses"=>["CS 4495", "CS 7495"], "type"=>"or"}]
+
