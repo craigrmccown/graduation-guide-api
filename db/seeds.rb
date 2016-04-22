@@ -1,46 +1,54 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+require "#{Rails.root}/lib/grouch"
+require 'json'
 
-def create(model, data)
-  if model.exists? data[:id]
-    model.find data[:id]
+# Inserts model if it doesn't already exist
+def safe_create(model)
+  if model.class.exists? model.id
+    model.class.find model.id
   else
-    model.create! data
+    model.save!
   end
 end
 
-role_admin = create Role, id: 0, name: 'admin'
-role_student = create Role, id: 1, name: 'student'
-major_cs = create Major, id: 0, name: 'Computer Science', description: 'Georgia Tech computer science major'
-major_ee = create Major, id: 1, name: 'Electrical Engineering', description: 'Georgia Tech electrical engineering major'
-track_networks = create Track, id: 0, major_id: 0, name: 'Information Internetworks', description: 'Computer Science Information Internetworks thread'
-track_sysarch = create Track, id: 1, major_id: 0, name: 'Systems & Architecture', description: 'Computer Science Systems and Architecture thread'
-minor_biology = create Minor, id: 0, name: 'Biology', description: 'Georgia Tech Biology minor'
-minor_music = create Minor, id: 1, name: 'Music', description: 'Georgia Tech Music minor'
-course_cs1331 = create Course, id: 0, name: 'CS 1331', description: 'Object Oriented Programming'
-course_cs1332 = create Course, id: 1, name: 'CS 1332', description: 'Data Structures and Algorithms'
-course_cs3251 = create Course, id: 2, name: 'CS 3251', description: 'Networking I'
-course_math3012 = create Course, id: 3, name: 'MATH 3012', description: 'Combinatorics'
-course_cs3510 = create Course, id: 4, name: 'CS 3510', description: 'Design and Analysis of Algorithms'
-course_cs4240 = create Course, id: 5, name: 'CS 4240', description: 'Compilers and Interpreters'
-course_cs4210 = create Course, id: 6, name: 'CS 4210', description: 'Advanced Operating Systems'
+# Transforms grouch data into usable format
+def transform_prereq(data)
+  courses = data['courses']
 
-major_cs.courses.destroy_all
-track_networks.courses.destroy_all
-track_sysarch.courses.destroy_all
+  if courses.length == 1
+    puts 'equals 1'
+  elsif courses.length == 2
+    puts 'equals 2'
+  else
+    puts 'over 2'
+  end
+end
 
-major_cs.courses << course_cs1331
-major_cs.courses << course_cs1332
-major_cs.courses << course_math3012
-track_networks.courses << course_cs3251
-track_sysarch.courses << course_cs4240
-track_sysarch.courses << course_cs4210
+# Create static data
+role_admin = safe_create Role.new(id: 0, name: 'admin')
+role_student = safe_create Role.new(id: 1, name: 'student')
+major_cs = safe_create Major.new(id: 0, name: 'Computer Science', description: 'Georgia Tech computer science major')
 
-major_cs.save!
-track_networks.save!
-track_sysarch.save!
+# Get grouch course ids
+major_id = 'CS'
+grouch_course_ids = Grouch::get_course_ids major_id
+
+# Get courses in Grouch not yet in database
+existing_course_ids = Course.all.collect { |course| course.id }
+new_course_ids = grouch_course_ids - existing_course_ids
+
+# Insert new courses
+new_course_ids.each do |course_id|
+  data = Grouch::get_course major_id, course_id
+  course = Course.new id: course_id, name: data['identifier'], description: data['name'], grouch_data: data.to_json
+  major_cs.courses << course
+end
+
+# Resolve prereqs
+courses = Course.all
+courses.each do |course|
+  course_data = JSON.parse course.grouch_data
+  prereq_data = course_data['prerequisites']
+  transform_prereq prereq_data unless prereq_data.nil?
+end
+
+# "prerequisites"=>{"courses"=> ["CS 4641", {"courses"=>["CS 4495", "CS 7495"], "type"=>"or"}]

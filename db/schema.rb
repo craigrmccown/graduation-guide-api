@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20160210214406) do
   create_table "courses", force: :cascade do |t|
     t.string   "name",        null: false
     t.string   "description", null: false
+    t.string   "grouch_data", null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
@@ -80,6 +81,8 @@ ActiveRecord::Schema.define(version: 20160210214406) do
     t.integer "role_id", null: false
     t.integer "user_id", null: false
   end
+
+  add_index "roles_users", ["user_id", "role_id"], name: "index_roles_users_on_user_id_and_role_id", unique: true, using: :btree
 
   create_table "tracks", force: :cascade do |t|
     t.integer  "major_id",    null: false
