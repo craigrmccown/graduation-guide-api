@@ -1,8 +1,8 @@
 class CreatePrereqs < ActiveRecord::Migration
   def change
     create_table :prereqs do |t|
-      t.integer :parent_id, null: false
-      t.string  :type, null: false
+      t.integer :parent_id
+      t.string  :op, null: false
       t.timestamps null: false
     end
 

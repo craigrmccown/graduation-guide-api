@@ -10,34 +10,62 @@ def safe_create(model)
   end
 end
 
-# Transforms grouch data into usable format
-def resolve_prereqs(courses)
-  f_zero = File.open('data/zero.txt', 'w')
-  f_one = File.open('data/one.txt', 'w')
-  f_two = File.open('data/two.txt', 'w')
-  f_plus = File.open('data/plus.txt', 'w')
+def delete_prereqs(course)
+  return if course.prereq_id.nil?
+
+  query = "
+    update courses
+    set prereq_id = null
+    where id = #{course.id};
+
+    with recursive prereq_tree as (
+      select id, parent_id
+      from prereqs
+      where id = #{course.prereq_id}
+      union all
+      select prereqs.id, prereqs.parent_id
+      from prereqs
+      join prereq_tree on
+        prereqs.parent_id = prereq_tree.id
+    ), delete_courses_prereqs as (
+      delete from courses_prereqs
+      where prereq_id in (
+        select id from prereq_tree
+      )
+    )
+    delete from prereqs
+    where id in (
+        select id from prereq_tree
+    )
+  "
+
+  ActiveRecord::Base.connection.execute query
+end
+
+def insert_prereqs(course, data, parent_id=nil)
+  prereq = Prereq.new op: data['type'], parent_id: parent_id
+  prereq.save!
+
+  outfile = File.open('data/seeds.out', 'a')
 
   begin
-    courses.each do |course|
-      grouch_data = JSON.parse course.grouch_data
-      prereq_data = grouch_data['prerequisites']
-
-      if prereq_data.nil?
-        f_zero.puts "0: #{course.name}"
-      elsif prereq_data['courses'].length == 1
-        f_one.puts "1: #{course.name}, #{prereq_data}"
-      elsif prereq_data['courses'].length == 2
-        f_two.puts "2: #{course.name}, #{prereq_data}"
+    data['courses'].each do |prereq_course_data|
+      if prereq_course_data.is_a?(String)
+        begin
+          course = Course.find_by! name: prereq_course_data
+          prereq.courses << course
+        rescue
+          outfile.puts "Could not find course with name #{prereq_course_data}"
+        end
       else
-        f_plus.puts "3+: #{course.name}, #{prereq_data}"
+        insert_prereqs(course, prereq_course_data, prereq.id)
       end
     end
   ensure
-    f_zero.close
-    f_one.close
-    f_two.close
-    f_plus.close
+    outfile.close
   end
+
+  prereq
 end
 
 # Create static data
@@ -60,8 +88,20 @@ new_course_ids.each do |course_id|
   major_cs.courses << course
 end
 
+# Index courses by name
+courses_by_name = {}
+Course.all.each { |course| courses_by_name[course.name] = course }
+
 # Resolve prereqs
-courses = resolve_prereqs(Course.all)
+File.open('data/seeds.out', 'w').close
 
-# "prerequisites"=>{"courses"=> ["CS 4641", {"courses"=>["CS 4495", "CS 7495"], "type"=>"or"}]
+courses_by_name.each do |course_name, course|
+  grouch_data = JSON.parse(course.grouch_data)
+  next if grouch_data['prerequisites'].nil?
+  prereq_data = grouch_data['prerequisites']
 
+  delete_prereqs course
+  root = insert_prereqs course, prereq_data
+  course.prereq = root
+  course.save!
+end

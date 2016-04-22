@@ -80,8 +80,8 @@ ActiveRecord::Schema.define(version: 20160422193516) do
   add_index "minors_users", ["user_id", "minor_id"], name: "index_minors_users_on_user_id_and_minor_id", unique: true, using: :btree
 
   create_table "prereqs", force: :cascade do |t|
-    t.integer  "parent_id",  null: false
-    t.string   "type",       null: false
+    t.integer  "parent_id"
+    t.string   "op",         null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
