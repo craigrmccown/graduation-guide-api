@@ -23,13 +23,17 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   end
 
   create_table "courses", force: :cascade do |t|
-    t.string   "name",            null: false
-    t.string   "description",     null: false
-    t.integer  "hours",           null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.string   "name",        null: false
+    t.string   "description", null: false
+    t.integer  "hours",       null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.integer  "prereq_id"
-    t.integer  "course_group_id"
+  end
+
+  create_table "courses_course_groups", force: :cascade do |t|
+    t.integer "course_id",       null: false
+    t.integer "course_group_id", null: false
   end
 
   create_table "courses_prereqs", force: :cascade do |t|
@@ -80,11 +84,12 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   end
 
   create_table "requirement_rules", force: :cascade do |t|
-    t.integer  "parent_id"
+    t.integer  "requirement_id"
     t.integer  "course_id"
+    t.integer  "parent_id"
     t.integer  "quantity"
     t.string   "op"
-    t.string   "req_type"
+    t.string   "rule_type"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "course_group_id"
@@ -94,10 +99,9 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.integer  "major_id"
     t.integer  "track_id"
     t.integer  "minor_id"
-    t.integer  "priority",    null: false
-    t.string   "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "priority",   null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "roles", force: :cascade do |t|
@@ -135,8 +139,9 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "updated_at",         null: false
   end
 
-  add_foreign_key "courses", "course_groups"
   add_foreign_key "courses", "prereqs"
+  add_foreign_key "courses_course_groups", "course_groups"
+  add_foreign_key "courses_course_groups", "courses"
   add_foreign_key "courses_prereqs", "courses"
   add_foreign_key "courses_prereqs", "prereqs"
   add_foreign_key "courses_users", "courses"
@@ -149,6 +154,7 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   add_foreign_key "requirement_rules", "course_groups"
   add_foreign_key "requirement_rules", "courses"
   add_foreign_key "requirement_rules", "requirement_rules", column: "parent_id"
+  add_foreign_key "requirement_rules", "requirements"
   add_foreign_key "requirements", "majors"
   add_foreign_key "requirements", "minors"
   add_foreign_key "requirements", "tracks"

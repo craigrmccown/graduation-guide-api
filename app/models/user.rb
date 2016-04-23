@@ -31,4 +31,31 @@ class User < ActiveRecord::Base
     roles << Role[:student]
     save!
   end
+
+  def requirement_tree
+    lookup = {}
+    query = ""
+    requirements = Requirement.find_by_sql query
+
+    requirements.each do |requirement|
+      if lookup[requirement.id].nil?
+        lookup[requirement.id] = requirement
+      end
+
+      unless requirement.parent_id.nil?
+        lookup[requirement.parent_id].children << requirement
+      end
+    end
+
+    roots = requirements.select { |requirement| requirement.parent_id.nil? }
+    roots.each { |root| root.load! self.courses }
+
+    self.courses.each do |course|
+      roots.each do |root|
+        break if root.evaluate! course
+      end
+    end
+
+    roots
+  end
 end
