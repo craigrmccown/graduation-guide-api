@@ -1,6 +1,9 @@
 class CourseController < ApplicationController
   def show
-    render json: required_courses
+    courses = required_courses
+    prereqs = Prereq.build_tree courses
+
+    render json: { courses: required_courses, prereqs: prereqs }
   end
 
   def show_completed
