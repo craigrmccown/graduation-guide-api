@@ -1,7 +1,7 @@
 class MajorController < ApplicationController
   def show
     majors = Major.all
-    render json: majors.as_json(include: [:tracks])
+    render json: majors
   end
 
   def update
