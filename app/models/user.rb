@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
     end
 
     roots = requirements.select { |requirement| requirement.parent_id.nil? }
-    roots.each { |root| root.load! self.courses }
+    roots.each { |root| root.load! Course.all }
 
     self.courses.each do |course|
       roots.each do |root|
