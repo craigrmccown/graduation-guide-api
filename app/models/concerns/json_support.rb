@@ -10,25 +10,16 @@ module JsonSupport
       @json_excluded = attrs
     end
 
-    def json_transients
-      @json_transients ||= []
+    def json_embedded
+      @json_embedded ||= []
     end
 
-    def json_transient(*attrs)
-      @json_transients = attrs
-    end
-
-    def json_nested
-      @json_nested ||= []
-    end
-
-    def json_nest(*attrs)
-      @json_nested = attrs
+    def json_embed(*attrs)
+      @json_embedded = attrs
     end
   end
 
   def serializable_hash(options={})
-    options[:include] ||= self.class.json_nested
     keys_to_camel super(options)
   end
 
@@ -39,8 +30,8 @@ module JsonSupport
       hash.delete e.to_s
     end
 
-    self.class.json_transients.each do |t|
-      hash[t.to_s] = send t.to_s
+    self.class.json_embedded.each do |e|
+      hash[e.to_s] = send e.to_s
     end
 
     values = hash.map do |key, value|

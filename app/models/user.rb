@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   include BCrypt
 
   json_exclude :encrypted_password
-  json_nest :roles, :majors, :tracks, :minors
+  json_embed :roles, :majors, :tracks, :minors
 
   validates :email, format: { with: /\A.+@.+\z/, message: 'must supply a valid email' }
   validates :first_name, presence: true
@@ -14,7 +14,6 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :majors
   has_and_belongs_to_many :minors
   has_and_belongs_to_many :tracks
-  has_and_belongs_to_many :courses
 
   def password=(plaintext)
     self.encrypted_password = Password.create(plaintext, :cost => 5).to_s

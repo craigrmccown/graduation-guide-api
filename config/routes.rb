@@ -19,5 +19,9 @@ Rails.application.routes.draw do
   get 'courses/completed' => 'course#show_completed'
   put 'courses/completed' => 'course#update_completed'
 
+  get 'prereqs' => 'prereq#show'
+  get 'course-groups' => 'course_group#show'
+  get 'requirements' => 'requirement#show'
+
   match '*path', to: 'application#missing_endpoint', via: :all
 end
