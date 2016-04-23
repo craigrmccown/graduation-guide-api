@@ -34,7 +34,52 @@ class User < ActiveRecord::Base
 
   def requirement_tree
     lookup = {}
-    query = ""
+    query = "
+      with recursive requirement_tree as (
+        select
+          *,
+          priority as root_priority,
+          0 as level
+        from requirements
+        where major_id in (
+          select major_id from majors_users
+          where user_id = #{self.id}
+        )
+          and parent_id is null
+        union
+        select
+          *,
+          priority as root_priority,
+          0 as level
+        from requirements
+        where track_id in (
+          select track_id from tracks_users
+          where user_id = #{self.id}
+        )
+          and parent_id is null
+        union
+        select
+          *,
+          priority as root_priority,
+          0 as level
+        from requirements
+        where minor_id in (
+          select minor_id from minors_users
+          where user_id = #{self.id}
+        )
+          and parent_id is null
+        union all
+        select
+          requirements.*,
+          requirements_tree.root_priority,
+          requirements_tree.level + 1 as level
+        from requirements
+        join requirement_tree
+          on requirements.parent_id = requirements_tree.id
+      )
+      select * from requirement_tree
+      order by root_priority, level
+    "
     requirements = Requirement.find_by_sql query
 
     requirements.each do |requirement|
