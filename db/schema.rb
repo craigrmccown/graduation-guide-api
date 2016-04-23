@@ -79,19 +79,25 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "requirements", force: :cascade do |t|
-    t.integer  "course_id"
-    t.integer  "major_id"
-    t.integer  "track_id"
-    t.integer  "minor_id"
+  create_table "requirement_rules", force: :cascade do |t|
     t.integer  "parent_id"
+    t.integer  "course_id"
     t.integer  "quantity"
-    t.string   "req_type",        null: false
     t.string   "op"
-    t.string   "description"
+    t.string   "req_type"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "course_group_id"
+  end
+
+  create_table "requirements", force: :cascade do |t|
+    t.integer  "major_id"
+    t.integer  "track_id"
+    t.integer  "minor_id"
+    t.integer  "priority",    null: false
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "roles", force: :cascade do |t|
@@ -140,11 +146,11 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   add_foreign_key "minors_users", "minors"
   add_foreign_key "minors_users", "users"
   add_foreign_key "prereqs", "prereqs", column: "parent_id"
-  add_foreign_key "requirements", "course_groups"
-  add_foreign_key "requirements", "courses"
+  add_foreign_key "requirement_rules", "course_groups"
+  add_foreign_key "requirement_rules", "courses"
+  add_foreign_key "requirement_rules", "requirement_rules", column: "parent_id"
   add_foreign_key "requirements", "majors"
   add_foreign_key "requirements", "minors"
-  add_foreign_key "requirements", "requirements", column: "parent_id"
   add_foreign_key "requirements", "tracks"
   add_foreign_key "roles_users", "roles"
   add_foreign_key "roles_users", "users"
