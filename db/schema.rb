@@ -11,45 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160422193516) do
+ActiveRecord::Schema.define(version: 20160423024927) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "course_groups", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "courses", force: :cascade do |t|
-    t.string   "name",        null: false
-    t.string   "description", null: false
-    t.string   "grouch_data", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.string   "name",            null: false
+    t.string   "description",     null: false
+    t.integer  "hours",           null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.integer  "prereq_id"
+    t.integer  "course_group_id"
   end
-
-  create_table "courses_majors", force: :cascade do |t|
-    t.integer "course_id", null: false
-    t.integer "major_id",  null: false
-  end
-
-  add_index "courses_majors", ["course_id", "major_id"], name: "index_courses_majors_on_course_id_and_major_id", unique: true, using: :btree
-
-  create_table "courses_minors", force: :cascade do |t|
-    t.integer "course_id", null: false
-    t.integer "minor_id",  null: false
-  end
-
-  add_index "courses_minors", ["course_id", "minor_id"], name: "index_courses_minors_on_course_id_and_minor_id", unique: true, using: :btree
 
   create_table "courses_prereqs", force: :cascade do |t|
     t.integer "prereq_id", null: false
     t.integer "course_id", null: false
   end
 
-  create_table "courses_tracks", force: :cascade do |t|
+  create_table "courses_users", force: :cascade do |t|
     t.integer "course_id", null: false
-    t.integer "track_id",  null: false
+    t.integer "user_id",   null: false
   end
 
-  add_index "courses_tracks", ["course_id", "track_id"], name: "index_courses_tracks_on_course_id_and_track_id", unique: true, using: :btree
+  add_index "courses_users", ["course_id", "user_id"], name: "index_courses_users_on_course_id_and_user_id", unique: true, using: :btree
 
   create_table "majors", force: :cascade do |t|
     t.string   "name",        null: false
@@ -84,6 +77,21 @@ ActiveRecord::Schema.define(version: 20160422193516) do
     t.string   "op",         null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "requirements", force: :cascade do |t|
+    t.integer  "course_id"
+    t.integer  "major_id"
+    t.integer  "track_id"
+    t.integer  "minor_id"
+    t.integer  "parent_id"
+    t.integer  "quantity"
+    t.string   "req_type",        null: false
+    t.string   "op"
+    t.string   "description"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.integer  "course_group_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -121,20 +129,23 @@ ActiveRecord::Schema.define(version: 20160422193516) do
     t.datetime "updated_at",         null: false
   end
 
+  add_foreign_key "courses", "course_groups"
   add_foreign_key "courses", "prereqs"
-  add_foreign_key "courses_majors", "courses"
-  add_foreign_key "courses_majors", "majors"
-  add_foreign_key "courses_minors", "courses"
-  add_foreign_key "courses_minors", "minors"
   add_foreign_key "courses_prereqs", "courses"
   add_foreign_key "courses_prereqs", "prereqs"
-  add_foreign_key "courses_tracks", "courses"
-  add_foreign_key "courses_tracks", "tracks"
+  add_foreign_key "courses_users", "courses"
+  add_foreign_key "courses_users", "users"
   add_foreign_key "majors_users", "majors"
   add_foreign_key "majors_users", "users"
   add_foreign_key "minors_users", "minors"
   add_foreign_key "minors_users", "users"
   add_foreign_key "prereqs", "prereqs", column: "parent_id"
+  add_foreign_key "requirements", "course_groups"
+  add_foreign_key "requirements", "courses"
+  add_foreign_key "requirements", "majors"
+  add_foreign_key "requirements", "minors"
+  add_foreign_key "requirements", "requirements", column: "parent_id"
+  add_foreign_key "requirements", "tracks"
   add_foreign_key "roles_users", "roles"
   add_foreign_key "roles_users", "users"
   add_foreign_key "tracks", "majors"
