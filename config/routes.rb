@@ -1,14 +1,23 @@
 Rails.application.routes.draw do
-  post 'auth/login' => 'auth#login'
-  post 'auth/logout' => 'auth#logout'
-  post 'users' => 'user#register_student'
-  get 'users/me' => 'user#whoami'
-  post 'users/me/majors' => 'user#add_majors'
-  post 'users/me/tracks' => 'user#add_tracks'
-  post 'users/me/minors' => 'user#add_minors'
-  get 'majors' => 'major#get_all'
-  get 'majors/:id/tracks' => 'track#get_by_major'
-  get 'minors' => 'minor#get_all'
-  get 'courses' => 'course#get_all_for_user'
+  namespace :auth do
+    post 'login' => 'auth#login'
+    post 'logout' => 'auth#logout'
+    post 'register' => 'user#new'
+    get 'whoami' => 'user#show'
+  end
+
+  get 'majors' => 'major#show'
+  put 'majors' => 'major#update'
+
+  get 'majors/:id/tracks' => 'track#show'
+  put 'tracks' => 'track#update'
+
+  get 'minors' => 'minor#show'
+  put 'minors' => 'minor#update'
+
+  get 'courses' => 'course#show'
+  get 'courses/completed' => 'course#show_completed'
+  put 'courses/completed' => 'course#update_completed'
+
   match '*path', to: 'application#missing_endpoint', via: :all
 end

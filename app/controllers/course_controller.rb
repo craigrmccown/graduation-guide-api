@@ -1,24 +1,41 @@
 class CourseController < ApplicationController
-  def get_all_for_user
+  def show
+    render json: required_courses
+  end
+
+  def show_completed
+    render json: current_user.courses
+  end
+
+  def update_completed
+    course_ids = params[:_json].collect { |course_data| course_data[:id] }
+    user_course_ids = required_courses.collect { |course| course.id }
+    course_ids = user_course_ids & course_ids
+    courses = Course.find course_ids
+
+    if courses.length.eql? course_ids.length
+      current_user.courses.destroy_all
+      current_user.courses << courses
+
+      render json: { message: 'successfully added courses' }
+    else
+      render json: { message: 'only courses part of your selected majors, minors, and tracks allowed' }, status: 400
+    end
+  end
+
+  def required_courses
+    major_courses | minor_courses | track_courses
+  end
+
+  def major_courses
     major_courses = (current_user.majors.collect { |major| major.courses }).flatten
-    minor_courses = (current_user.minors.collect { |minor| minor.courses }).flatten
+  end
+
+  def track_courses
     track_courses = (current_user.tracks.collect { |track| track.courses }).flatten
-    courses = (major_courses + minor_courses + track_courses).uniq
-    render json: courses
   end
 
-  def get_major_courses
-    major_courses = (current_user.majors.collect { |major| major.courses }).flatten
-    render json: major_courses
-  end
-
-  def get_minor_courses
+  def minor_courses
     minor_courses = (current_user.minors.collect { |minor| minor.courses }).flatten
-    render json: minor_courses
-  end
-
-  def get_track_courses
-    track_courses = (current_user.tracks.collect { |track| track.courses }).flatten
-    render json: track_courses
   end
 end
