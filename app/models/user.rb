@@ -98,7 +98,11 @@ class User < ActiveRecord::Base
     roots = requirements.select { |requirement| requirement.parent_id.nil? }
 
     self.courses.each do |course|
-      roots.each { |root| root.evaluate! course }
+      unsatisfied = roots.select { |root| not root.satisfied? }
+
+      unsatisfied.each do |root|
+        break if root.evaluate! course
+      end
     end
 
     roots

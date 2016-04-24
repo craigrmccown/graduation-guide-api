@@ -2,18 +2,21 @@ class RequirementRule < ActiveRecord::Base
   # TODO use polymorphism
 
   attr_reader :relevant_courses
+  attr_accessor :num_courses
+  attr_accessor :num_hours
+  attr_accessor :course_completed
+  attr_accessor :num_any
 
   belongs_to :course_group, autosave: false
   belongs_to :course, autosave: false
   belongs_to :requirement, autosave: false
   has_many :courses, through: :course_group
 
-  def after_initialize
-    @is_satisfied = false
-    @num_courses = 0
-    @num_hours = 0
-    @course_completed = false
-    @num_any = 0
+  after_initialize do |rule|
+    rule.num_courses = 0
+    rule.num_hours = 0
+    rule.course_completed = false
+    rule.num_any = 0
   end
 
   def <=>(node)
@@ -59,18 +62,25 @@ class RequirementRule < ActiveRecord::Base
   private
 
   def evaluate_courses!(course)
-    @num_courses += 1 if self.courses.include? course
+    applies = self.courses.include? course
+    @num_courses += 1 if applies
+    applies
   end
 
   def evaluate_hours!(course)
-    @num_hours += course.hours if self.courses.include? course
+    applies = self.courses.include? course
+    @num_hours += course.hours if applies
+    applies
   end
 
   def evaluate_course!(course)
-    @course_completed = self.course.eql? course
+    applies = self.course.eql? course
+    @course_completed = applies
+    applies
   end
 
   def evaluate_any!(course)
     @num_any += 1
+    true
   end
 end
