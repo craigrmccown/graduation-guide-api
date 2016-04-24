@@ -6,7 +6,7 @@ class Requirement < ActiveRecord::Base
   attr_accessor :is_satisfied
   attr_accessor :children
 
-  json_embed :is_satisfied, :description, :courses
+  json_embed :is_satisfied, :description, :unsatisfied_description, :courses
   json_exclude :op, :parent_id, :priority
 
   has_many :requirement_rules
@@ -28,13 +28,13 @@ class Requirement < ActiveRecord::Base
   end
 
   def description
-    descriptions = nodes.inject [] { |descriptions, node| descriptions << node.description }
-    result = descriptions.join " #{self.op.upcase} "
-    
-    if parent_id.nil?
-      result
-    else
-      "(#{result})"
+    describe(nodes)
+  end
+
+  def unsatisfied_description
+    unless satisfied?
+      unsatisfied = nodes.select { |node| not node.satisfied? }
+      describe(unsatisfied)
     end
   end
 
@@ -61,4 +61,17 @@ class Requirement < ActiveRecord::Base
   end
 
   alias satisfied? is_satisfied
+
+  private
+
+  def describe(nodes)
+    descriptions = nodes.inject [] { |descriptions, node| descriptions << node.description }
+    result = descriptions.join " #{self.op.upcase} "
+    
+    if parent_id.nil?
+      result
+    else
+      "(#{result})"
+    end
+  end
 end
