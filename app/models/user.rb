@@ -39,36 +39,39 @@ class User < ActiveRecord::Base
     query = "
       with recursive requirement_tree as (
         select
-          *,
-          priority as root_priority,
+          requirements.*,
+          requirements.priority as root_priority,
           0 as level
         from requirements
-        where major_id in (
-          select major_id from majors_users
-          where user_id = #{self.id}
-        )
+        join majors_requirements
+          on requirements.id = majors_requirements.requirement_id
+        join majors_users
+          on majors_requirements.major_id = majors_users.major_id
+        where majors_users.user_id = #{self.id}
           and parent_id is null
         union
         select
-          *,
-          priority as root_priority,
+          requirements.*,
+          requirements.priority as root_priority,
           0 as level
         from requirements
-        where track_id in (
-          select track_id from tracks_users
-          where user_id = #{self.id}
-        )
+        join requirements_tracks
+          on requirements.id = requirements_tracks.requirement_id
+        join tracks_users
+          on requirements_tracks.track_id = tracks_users.track_id
+        where tracks_users.user_id = #{self.id}
           and parent_id is null
         union
         select
-          *,
-          priority as root_priority,
+          requirements.*,
+          requirements.priority as root_priority,
           0 as level
         from requirements
-        where minor_id in (
-          select minor_id from minors_users
-          where user_id = #{self.id}
-        )
+        join minors_requirements
+          on requirements.id = minors_requirements.requirement_id
+        join minors_users
+          on minors_requirements.minor_id = minors_users.minor_id
+        where minors_users.user_id = #{self.id}
           and parent_id is null
         union all
         select
@@ -79,7 +82,7 @@ class User < ActiveRecord::Base
         join requirement_tree
           on requirements.parent_id = requirement_tree.id
       )
-      select #{Requirement.column_names.join ','}
+      select distinct #{Requirement.column_names.join ','}
       from requirement_tree
       order by root_priority, level
     "

@@ -57,6 +57,13 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "updated_at",  null: false
   end
 
+  create_table "majors_requirements", force: :cascade do |t|
+    t.integer "major_id",       null: false
+    t.integer "requirement_id", null: false
+  end
+
+  add_index "majors_requirements", ["major_id", "requirement_id"], name: "index_majors_requirements_on_major_id_and_requirement_id", unique: true, using: :btree
+
   create_table "majors_users", force: :cascade do |t|
     t.integer "major_id", null: false
     t.integer "user_id",  null: false
@@ -70,6 +77,13 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
+
+  create_table "minors_requirements", force: :cascade do |t|
+    t.integer "minor_id",       null: false
+    t.integer "requirement_id", null: false
+  end
+
+  add_index "minors_requirements", ["minor_id", "requirement_id"], name: "index_minors_requirements_on_minor_id_and_requirement_id", unique: true, using: :btree
 
   create_table "minors_users", force: :cascade do |t|
     t.integer "minor_id"
@@ -110,6 +124,13 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   end
 
   add_index "requirements", ["parent_id", "priority"], name: "index_requirements_on_parent_id_and_priority", unique: true, using: :btree
+
+  create_table "requirements_tracks", force: :cascade do |t|
+    t.integer "track_id",       null: false
+    t.integer "requirement_id", null: false
+  end
+
+  add_index "requirements_tracks", ["track_id", "requirement_id"], name: "index_requirements_tracks_on_track_id_and_requirement_id", unique: true, using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string "name", null: false
@@ -153,18 +174,21 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   add_foreign_key "courses_prereqs", "prereqs"
   add_foreign_key "courses_users", "courses"
   add_foreign_key "courses_users", "users"
+  add_foreign_key "majors_requirements", "majors"
+  add_foreign_key "majors_requirements", "requirements"
   add_foreign_key "majors_users", "majors"
   add_foreign_key "majors_users", "users"
+  add_foreign_key "minors_requirements", "minors"
+  add_foreign_key "minors_requirements", "requirements"
   add_foreign_key "minors_users", "minors"
   add_foreign_key "minors_users", "users"
   add_foreign_key "prereqs", "prereqs", column: "parent_id"
   add_foreign_key "requirement_rules", "course_groups"
   add_foreign_key "requirement_rules", "courses"
   add_foreign_key "requirement_rules", "requirements"
-  add_foreign_key "requirements", "majors"
-  add_foreign_key "requirements", "minors"
   add_foreign_key "requirements", "requirements", column: "parent_id"
-  add_foreign_key "requirements", "tracks"
+  add_foreign_key "requirements_tracks", "requirements"
+  add_foreign_key "requirements_tracks", "tracks"
   add_foreign_key "roles_users", "roles"
   add_foreign_key "roles_users", "users"
   add_foreign_key "tracks", "majors"

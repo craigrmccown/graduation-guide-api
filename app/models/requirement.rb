@@ -10,9 +10,9 @@ class Requirement < ActiveRecord::Base
   json_exclude :op, :parent_id, :priority
 
   has_many :requirement_rules
-  belongs_to :major, autosave: false
-  belongs_to :track, autosave: false
-  belongs_to :minor, autosave: false
+  has_and_belongs_to_many :majors
+  has_and_belongs_to_many :tracks
+  has_and_belongs_to_many :minors
 
   after_initialize do |requirement|
     requirement.children = []
