@@ -5,6 +5,7 @@ class Prereq < ActiveRecord::Base
   attr_accessor :is_satisfied
 
   json_embed :is_satisfied, :description
+  json_exclude :op, :parent_id
 
   has_and_belongs_to_many :courses
 
@@ -24,9 +25,9 @@ class Prereq < ActiveRecord::Base
   end
 
   def description
-    child_descriptions = children.inject [] { |descriptions, child| child.description }
-    self_descriptions = self.courses.inject [] { |descriptions, course| course.name }
-    result = (self_descriptions + descriptions).join " #{self.op.upcase} "
+    child_descriptions = children.inject [] { |descriptions, child| descriptions << child.description }
+    self_descriptions = self.courses.inject [] { |descriptions, course| descriptions << course.name }
+    result = (self_descriptions + child_descriptions).join " #{self.op.upcase} "
 
     if self.parent_id.nil?
       result

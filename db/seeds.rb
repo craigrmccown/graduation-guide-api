@@ -1,7 +1,7 @@
 # Inserts model if it doesn't already exist
 def safe_create(model)
   if model.class.exists? model.id
-    model.class.find model.id
+    model = model.class.find model.id
   else
     model.save!
   end
@@ -53,6 +53,26 @@ course_cs1332 = safe_create Course.new(id: 15, name: 'CS 1332', description: 'Da
 course_cs2340 = safe_create Course.new(id: 16, name: 'CS 2340', description: 'Objects and Design', hours: 3)
 course_cs2110 = safe_create Course.new(id: 17, name: 'CS 2110', description: 'Computing Organization and Programming', hours: 4)
 course_cs2200 = safe_create Course.new(id: 18, name: 'CS 2200', description: 'Computer Systems and Networks', hours: 4)
+
+# Prereqs
+prereq_eng1102 = safe_create Prereq.new(id: 0, op: 'and')
+prereq_eng1102.courses << course_eng1101
+course_eng1102.update_attribute :prereq_id, prereq_eng1102.id
+prereq_germ2002 = safe_create Prereq.new(id: 1, op: 'and')
+prereq_germ2002.courses << course_germ2001
+course_germ2002.update_attribute :prereq_id, prereq_germ2002.id
+prereq_span2002 = safe_create Prereq.new(id: 2, op: 'and')
+prereq_span2002.courses << course_span2001
+course_span2002.update_attribute :prereq_id, prereq_span2002.id
+prereq_phys2212= safe_create Prereq.new(id: 3, op: 'and')
+prereq_phys2212.courses << course_phys2211
+course_phys2212.update_attribute :prereq_id, prereq_phys2212.id
+prereq_chem1212 = safe_create Prereq.new(id: 4, op: 'and')
+prereq_chem1212.courses << course_chem1211
+course_chem1212.update_attribute :prereq_id, prereq_chem1212.id
+prereq_eas1601 = safe_create Prereq.new(id: 5, op: 'and')
+prereq_eas1601.courses << course_eas1600
+course_eas1601.update_attribute :prereq_id, prereq_eas1601.id
 
 # Requirements and rules
 req_humanities = safe_create Requirement.new(id: 0, major: major_cs, priority: 0, op: 'and')

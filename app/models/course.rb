@@ -5,6 +5,7 @@ class Course < ActiveRecord::Base
   validates :description, presence: true
 
   has_and_belongs_to_many :course_groups
+  has_and_belongs_to_many :prereqs
   has_and_belongs_to_many :majors
   has_and_belongs_to_many :minors
   has_and_belongs_to_many :tracks

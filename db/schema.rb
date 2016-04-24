@@ -41,6 +41,8 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.integer "course_id", null: false
   end
 
+  add_index "courses_prereqs", ["prereq_id", "course_id"], name: "index_courses_prereqs_on_prereq_id_and_course_id", unique: true, using: :btree
+
   create_table "courses_users", force: :cascade do |t|
     t.integer "course_id", null: false
     t.integer "user_id",   null: false
