@@ -1,10 +1,8 @@
 Rails.application.routes.draw do
-  namespace :auth do
-    post 'login' => 'auth#login'
-    post 'logout' => 'auth#logout'
-    post 'register' => 'user#new'
-    get 'whoami' => 'user#show'
-  end
+  post 'auth/login' => 'auth#login'
+  post 'auth/logout' => 'auth#logout'
+  post 'auth/register' => 'user#new'
+  get 'auth/whoami' => 'user#show'
 
   get 'majors' => 'major#show'
   put 'majors' => 'major#update'

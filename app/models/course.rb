@@ -5,7 +5,6 @@ class Course < ActiveRecord::Base
   validates :description, presence: true
 
   json_exclude :prereq_id
-  json_embed :prereqs
 
   belongs_to :prereq
   has_and_belongs_to_many :course_groups

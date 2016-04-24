@@ -73,13 +73,14 @@ class User < ActiveRecord::Base
         union all
         select
           requirements.*,
-          requirements_tree.root_priority,
-          requirements_tree.level + 1 as level
+          requirement_tree.root_priority,
+          requirement_tree.level + 1 as level
         from requirements
         join requirement_tree
-          on requirements.parent_id = requirements_tree.id
+          on requirements.parent_id = requirement_tree.id
       )
-      select * from requirement_tree
+      select #{Requirement.column_names.join ','}
+      from requirement_tree
       order by root_priority, level
     "
     requirements = Requirement.find_by_sql query

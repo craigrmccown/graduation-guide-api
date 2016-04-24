@@ -3,20 +3,20 @@ class Requirement < ActiveRecord::Base
 
   include JsonSupport
 
-  attr_reader :is_satisfied
-  attr_reader :children
+  attr_accessor :is_satisfied
+  attr_accessor :children
 
   json_embed :is_satisfied, :courses
-  json_exclude :op
+  json_exclude :op, :parent_id, :priority
 
   has_many :requirement_rules
   belongs_to :major, autosave: false
   belongs_to :track, autosave: false
   belongs_to :minor, autosave: false
 
-  def after_initialize
-    @children = []
-    @is_satisfied = false
+  after_initialize do |requirement|
+    requirement.children = []
+    requirement.is_satisfied = false
   end
 
   def <=>(node)
@@ -30,7 +30,7 @@ class Requirement < ActiveRecord::Base
   def courses
     rule_courses = self.requirement_rules.inject([]) { |courses, rule| courses + rule.relevant_courses }
     child_courses = @children.inject([]) { |courses, child| courses + child.courses }
-    rule_courses + child_courses
+    rule_courses + child_courses.uniq
   end
 
   def evaluate!(course)

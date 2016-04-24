@@ -44,6 +44,18 @@ class RequirementRule < ActiveRecord::Base
     end
   end
 
+  def relevant_courses
+    if ['courses', 'hours'].include? self.rule_type
+      self.courses
+    elsif self.rule_type.eql? 'course'
+      [self.course]
+    elsif self.rule_type.eql? 'any'
+      Course.all
+    else
+      []
+    end
+  end
+
   private
 
   def evaluate_courses!(course)
