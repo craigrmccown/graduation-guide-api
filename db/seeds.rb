@@ -34,6 +34,7 @@ track_theory = safe_create Track.new(id: 7, major: major_cs, name: 'Theory', des
 # Courses
 course_group_humanities = safe_create CourseGroup.new(id: 0, name: 'Humanities')
 course_group_lab_sciences = safe_create CourseGroup.new(id: 1, name: 'Lab Sciences')
+course_group_info_management = safe_create CourseGroup.new(id: 2, name: 'Information Management')
 course_eng1101 = safe_create Course.new(id: 0, name: 'ENG 1101', description: 'English I', hours: 3)
 course_eng1102 = safe_create Course.new(id: 1, name: 'ENG 1102', description: 'English II', hours: 3)
 course_germ2001 = safe_create Course.new(id: 2, name: 'GERM 2001', description: 'German I', hours: 3, course_groups: [course_group_humanities])
@@ -60,9 +61,16 @@ course_eas1601 = safe_create Course.new(id: 22, name: 'EAS 1601', description: '
 course_cs1301 = safe_create Course.new(id: 23, name: 'CS 1301', description: 'Introduction to Computing and Programming', hours: 3)
 course_cs1331 = safe_create Course.new(id: 24, name: 'CS 1331', description: 'Introduction to Object-Oriented Programming', hours: 3)
 course_cs1332 = safe_create Course.new(id: 25, name: 'CS 1332', description: 'Data Structures and Algorithms', hours: 3)
-course_cs2340 = safe_create Course.new(id: 26, name: 'CS 2340', description: 'Objects and Design', hours: 3)
+course_cs2050 = safe_create Course.new(id: 26, name: 'CS 2050', description: 'Introduction to Discrete Math', hours: 3)
 course_cs2110 = safe_create Course.new(id: 27, name: 'CS 2110', description: 'Computing Organization and Programming', hours: 4)
 course_cs2200 = safe_create Course.new(id: 28, name: 'CS 2200', description: 'Computer Systems and Networks', hours: 4)
+course_cs2340 = safe_create Course.new(id: 29, name: 'CS 2340', description: 'Objects and Design', hours: 3)
+course_cs3510 = safe_create Course.new(id: 32, name: 'CS 3510', description: 'Design and Analysis of Algorithms', hours: 3)
+course_cs3210 = safe_create Course.new(id: 30, name: 'CS 3210', description: 'Design of Operating Systems', hours: 3)
+course_cs3220 = safe_create Course.new(id: 31, name: 'CS 3220', description: 'Processor Design', hours: 3)
+course_cs3251 = safe_create Course.new(id: 33, name: 'CS 3251', description: 'Networking I', hours: 3, course_groups: [course_group_info_management])
+course_cs4235 = safe_create Course.new(id: 34, name: 'CS 4235', description: 'Introduction to Information Security', hours: 3, course_groups: [course_group_info_management])
+course_cs4400 = safe_create Course.new(id: 35, name: 'CS 4400', description: 'Introduction to Database Systems', hours: 3, course_groups: [course_group_info_management])
 
 # Prereqs
 prereq_eng1102 = safe_create Prereq.new(id: 0, op: 'and', courses: [course_eng1101])
