@@ -19,7 +19,7 @@ class Prereq < ActiveRecord::Base
     if self.op.eql? 'and'
       @is_satisfied = (self.courses - courses).empty? and children.all? { |child| child.satisfied? }
     elsif self.op.eql? 'or'
-      @is_satisfied = not (self.courses & courses).empty? or children.any? { |child| child.satisfied? }
+      @is_satisfied = (self.courses & courses).length > 0 or children.any? { |child| child.satisfied? }
     end
   end
 

@@ -115,9 +115,10 @@ class User < ActiveRecord::Base
         select * from prereqs
         where parent_id is null
         union all
-        select * from prereqs
-        join prereq_tree on
-          prereqs.parent_id = prereq_tree.id
+        select prereqs.*
+        from prereqs
+        join prereq_tree
+          on prereqs.parent_id = prereq_tree.id
       )
       select * from prereq_tree
     "
