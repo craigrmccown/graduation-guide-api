@@ -48,5 +48,12 @@ module GraduationGuideApi
     config.active_record.raise_in_transactional_callbacks = true
     config.middleware.insert_after ActionDispatch::ParamsParser, SnakeCaseBody
     config.action_dispatch.perform_deep_munge = false
+
+    config.middleware.use Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: :any
+      end
+    end
   end
 end
