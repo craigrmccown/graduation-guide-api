@@ -85,6 +85,32 @@ prereq_chem1212 = safe_create Prereq.new(id: 4, op: 'and', courses: [course_chem
 course_chem1212.update_attribute :prereq_id, prereq_chem1212.id
 prereq_eas1601 = safe_create Prereq.new(id: 5, op: 'and', courses: [course_eas1600])
 course_eas1601.update_attribute :prereq_id, prereq_eas1601.id
+prereq_cs1331 = safe_create Prereq.new(id:6, op:'and', courses: [course_cs1301])
+course_cs1331.update_attribute :prereq_id, prereq_cs1331.id
+prereq_cs1332 = safe_create Prereq.new(id: 7, op: 'and', courses: [course_cs1331])
+course_cs1332.update_attribute :prereq_id, prereq_cs1332.id
+prereq_cs2340 = safe_create Prereq.new(id: 8, op: 'and', courses: [course_cs1331])
+course_cs2340.update_attribute :prereq_id, prereq_cs2340.id
+prereq_cs2110 = safe_create Prereq.new(id: 9, op: 'and', courses: [course_cs1331])
+course_cs2110.update_attribute :prereq_id, prereq_cs2110.id
+prereq_cs2200 = safe_create Prereq.new(id: 10, op: 'and', courses: [course_cs2110])
+course_cs2200.update_attribute :prereq_id, prereq_cs2200.id
+prereq_cs3210 = safe_create Prereq.new(id: 11, op:'and', courses: [course_cs2200])
+course_cs3210.update_attribute :prereq_id, prereq_cs3210.id
+prereq_cs3220 = safe_create Prereq.new(id: 12, op:'and', courses: [course_cs2200])
+course_cs3220.update_attribute :prereq_id, prereq_cs3220.id
+prereq_cs3510_1 = safe_create Prereq.new(id: 13, op:'and', courses: [course_cs2050])
+prereq_cs3510_2 = safe_create Prereq.new(id: 14, parent_id: prereq_cs3510_1.id, op:'or', courses: [course_cs1332, course_math3012])
+course_cs3510.update_attribute :prereq_id, prereq_cs3510_1.id
+prereq_cs3251 = safe_create Prereq.new(id: 15, op: 'and', courses: [course_cs2200])
+course_cs3251.update_attribute :prereq_id, prereq_cs3251.id
+prereq_cs4235 = safe_create Prereq.new(id: 16, op: 'and', courses: [course_cs2200])
+course_cs4235.update_attribute :prereq_id, prereq_cs4235.id
+prereq_cs4400 = safe_create Prereq.new(id: 17, op: 'and', courses: [course_cs1301])
+course_cs4400.update_attribute :prereq_id, prereq_cs4400.id
+prereq_math3012 = safe_create Prereq.new(id: 18, op: 'and', courses: [course_math1552])
+course_math3012.update_attribute :prereq_id, prereq_math3012.id
+
 
 # Requirements and rules
 # Humanities
