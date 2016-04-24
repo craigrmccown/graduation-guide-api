@@ -11,10 +11,10 @@ class CreateRequirements < ActiveRecord::Migration
     end
 
     create_table :requirement_rules do |t|
-      t.integer :requirement_id
+      t.integer :requirement_id, null: false
       t.integer :course_id
       t.integer :quantity
-      t.string :rule_type
+      t.string :rule_type, null: false
       t.integer :priority, null: false
       t.timestamps null: false
     end
@@ -25,5 +25,7 @@ class CreateRequirements < ActiveRecord::Migration
     add_foreign_key :requirements, :requirements, column: :parent_id
     add_foreign_key :requirement_rules, :requirements
     add_foreign_key :requirement_rules, :courses
+    add_index :requirements, [:parent_id, :priority], unique: true
+    add_index :requirement_rules, [:requirement_id, :priority], unique: true
   end
 end

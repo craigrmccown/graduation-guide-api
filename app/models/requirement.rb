@@ -7,9 +7,12 @@ class Requirement < ActiveRecord::Base
   attr_reader :children
 
   json_embed :is_satisfied, :courses
-  json_ignore :op
+  json_exclude :op
 
   has_many :requirement_rules
+  belongs_to :major, autosave: false
+  belongs_to :track, autosave: false
+  belongs_to :minor, autosave: false
 
   def after_initialize
     @children = []
@@ -43,8 +46,8 @@ class Requirement < ActiveRecord::Base
     elsif self.op == 'or'
       unsatisfied.each { |node| node.evaluate! course }
       @is_satisfied = nodes.any? { |node| node.satisfied? } 
-    else
+    end
   end
 
-  alias :is_satisfied, :satisfied?
+  alias satisfied? is_satisfied
 end

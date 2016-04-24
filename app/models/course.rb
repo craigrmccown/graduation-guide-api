@@ -8,6 +8,7 @@ class Course < ActiveRecord::Base
   json_embed :prereqs
 
   belongs_to :prereq
+  has_and_belongs_to_many :course_groups
   has_and_belongs_to_many :majors
   has_and_belongs_to_many :minors
   has_and_belongs_to_many :tracks

@@ -22,6 +22,11 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "course_groups_courses", force: :cascade do |t|
+    t.integer "course_id",       null: false
+    t.integer "course_group_id", null: false
+  end
+
   create_table "courses", force: :cascade do |t|
     t.string   "name",        null: false
     t.string   "description", null: false
@@ -29,11 +34,6 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "prereq_id"
-  end
-
-  create_table "courses_course_groups", force: :cascade do |t|
-    t.integer "course_id",       null: false
-    t.integer "course_group_id", null: false
   end
 
   create_table "courses_prereqs", force: :cascade do |t|
@@ -84,14 +84,17 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   end
 
   create_table "requirement_rules", force: :cascade do |t|
-    t.integer  "requirement_id"
+    t.integer  "requirement_id",  null: false
     t.integer  "course_id"
     t.integer  "quantity"
-    t.string   "rule_type"
+    t.string   "rule_type",       null: false
+    t.integer  "priority",        null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "course_group_id"
   end
+
+  add_index "requirement_rules", ["requirement_id", "priority"], name: "index_requirement_rules_on_requirement_id_and_priority", unique: true, using: :btree
 
   create_table "requirements", force: :cascade do |t|
     t.integer  "major_id"
@@ -103,6 +106,8 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "requirements", ["parent_id", "priority"], name: "index_requirements_on_parent_id_and_priority", unique: true, using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string "name", null: false
@@ -139,9 +144,9 @@ ActiveRecord::Schema.define(version: 20160423024927) do
     t.datetime "updated_at",         null: false
   end
 
+  add_foreign_key "course_groups_courses", "course_groups"
+  add_foreign_key "course_groups_courses", "courses"
   add_foreign_key "courses", "prereqs"
-  add_foreign_key "courses_course_groups", "course_groups"
-  add_foreign_key "courses_course_groups", "courses"
   add_foreign_key "courses_prereqs", "courses"
   add_foreign_key "courses_prereqs", "prereqs"
   add_foreign_key "courses_users", "courses"

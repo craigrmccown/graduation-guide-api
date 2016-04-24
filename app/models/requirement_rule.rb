@@ -3,8 +3,9 @@ class RequirementRule < ActiveRecord::Base
 
   attr_reader :relevant_courses
 
-  belongs_to :course_group
-  belongs_to :course
+  belongs_to :course_group, autosave: false
+  belongs_to :course, autosave: false
+  belongs_to :requirement, autosave: false
   has_many :courses, through: :course_group
 
   def after_initialize
