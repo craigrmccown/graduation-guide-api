@@ -6,7 +6,7 @@ class Requirement < ActiveRecord::Base
   attr_accessor :is_satisfied
   attr_accessor :children
 
-  json_embed :is_satisfied, :courses
+  json_embed :is_satisfied, :description, :courses
   json_exclude :op, :parent_id, :priority
 
   has_many :requirement_rules
@@ -27,9 +27,20 @@ class Requirement < ActiveRecord::Base
     @nodes ||= (@children + self.requirement_rules).sort
   end
 
+  def description
+    descriptions = nodes.inject [] { |descriptions, node| descriptions << node.description }
+    result = descriptions.join " #{self.op.upcase} "
+    
+    if parent_id.nil?
+      result
+    else
+      "(#{result})"
+    end
+  end
+
   def courses
-    rule_courses = self.requirement_rules.inject([]) { |courses, rule| courses + rule.relevant_courses }
-    child_courses = @children.inject([]) { |courses, child| courses + child.courses }
+    rule_courses = self.requirement_rules.inject [] { |courses, rule| courses + rule.relevant_courses }
+    child_courses = @children.inject [] { |courses, child| courses + child.courses }
     rule_courses + child_courses.uniq
   end
 

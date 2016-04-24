@@ -59,6 +59,18 @@ class RequirementRule < ActiveRecord::Base
     end
   end
 
+  def description
+    if self.rule_type.eql? 'courses'
+      "#{self.quantity} courses in #{self.course_group.name}"
+    elsif self.rule_type.eql? 'hours'
+      "#{self.quantity} hours in #{self.course_group.name}"
+    elsif self.rule_type.eql? 'course'
+      "#{self.course.name}"
+    elsif self.rule_type.eql? 'any'
+      "#{self.quantity} hours in any course"
+    end
+  end
+
   private
 
   def evaluate_courses!(course)
@@ -80,7 +92,7 @@ class RequirementRule < ActiveRecord::Base
   end
 
   def evaluate_any!(course)
-    @num_any += 1
+    @num_any += course.hours
     true
   end
 end
