@@ -107,4 +107,35 @@ class User < ActiveRecord::Base
 
     roots
   end
+
+  def prereq_tree
+    lookup = {}
+    query = "
+      with recursive prereq_tree as (
+        select * from prereqs
+        where parent_id is null
+        union all
+        select * from prereqs
+        join prereq_tree on
+          prereqs.parent_id = prereq_tree.id
+      )
+      select * from prereq_tree
+    "
+    prereqs = Prereq.find_by_sql query
+
+    prereqs.each do |prereq|
+      if lookup[prereq.id].nil?
+        lookup[prereq.id] = prereq
+      end
+
+      unless prereq.parent_id.nil?
+        lookup[prereq.parent_id].children << prereq
+      end
+    end
+
+    roots = prereqs.select { |prereq| prereq.parent_id.nil? }
+    roots.each { |root| root.evaluate! self.courses }
+
+    roots
+  end
 end

@@ -1,35 +1,39 @@
 class Prereq < ActiveRecord::Base
   include JsonSupport
 
-  json_transient :course_ids
+  attr_accessor :children
+  attr_accessor :is_satisfied
+
+  json_embed :is_satisfied, :description
 
   has_and_belongs_to_many :courses
 
-  def course_ids
-    query = "
-      select course_id
-      from courses_prereqs
-      where prereq_id = #{self.id}
-    "
-
-    results = ActiveRecord::Base.connection.execute query
-    results.collect { |result| result['course_id'] }
+  after_initialize do |prereq|
+    prereq.children = []
+    prereq.is_satisfied = false
   end
 
-  def self.build_tree(courses)
-    course_ids = courses.collect { |course| course.id }
-    query = "
-      with recursive prereq_tree as (
-        select * from prereqs
-        where id = any (array[#{course_ids.join(',')}])
-        union all
-        select * from prereqs
-        join prereq_tree on
-          prereqs.parent_id = prereq_tree.id
-      )
-      select * from prereq_tree
-    "
+  def evaluate!(courses)
+    children.each { |child| child.evaluate! courses }
 
-    prereqs = Prereq.find_by_sql query
+    if self.op.eql? 'and'
+      @is_satisfied = (self.courses - courses).empty? and children.all? { |child| child.satisfied? }
+    elsif self.op.eql? 'or'
+      @is_satisfied = not (self.courses & courses).empty? or children.any? { |child| child.satisfied? }
+    end
   end
+
+  def description
+    child_descriptions = children.inject [] { |descriptions, child| child.description }
+    self_descriptions = self.courses.inject [] { |descriptions, course| course.name }
+    result = (self_descriptions + descriptions).join " #{self.op.upcase} "
+
+    if self.parent_id.nil?
+      result
+    else
+      "(#{result})"
+    end
+  end
+
+  alias satisfied? is_satisfied
 end
