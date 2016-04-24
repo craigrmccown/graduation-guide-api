@@ -14,11 +14,22 @@ role_admin = safe_create Role.new(id: 0, name: 'admin')
 role_student = safe_create Role.new(id: 1, name: 'student')
 
 # Majors
-major_cs = safe_create Major.new(id: 0, name: 'Computer Science', description: 'Georgia Tech computer science major')
+major_ae = safe_create Major.new(id: 0, name: 'Aerospace Engineering', description: 'Georgia Tech aerospace engineering major')
+major_ee = safe_create Major.new(id: 1, name: 'Electrical Engineering', description: 'Georgia Tech electrical engineering major')
+major_ie = safe_create Major.new(id: 2, name: 'Industrial Engineering', description: 'Georgia Tech industrial engineering major')
+major_me = safe_create Major.new(id: 3, name: 'Mechanical Engineering', description: 'Georgia Tech mechanical engineering major')
+major_cs = safe_create Major.new(id: 4, name: 'Computer Science', description: 'Georgia Tech computer science major')
+major_ba = safe_create Major.new(id: 5, name: 'Business Administration', description: 'Georgia Tech business administration major')
 
 # Tracks
-track_info_networks = safe_create Track.new(id: 0, major: major_cs, name: 'Information Internetworks', description: 'Represent, transform, transmit, and present data.')
-track_systems_arch = safe_create Track.new(id: 1, major: major_cs, name: 'Systems & Architecture', description: 'Create computer architectures, systems, and languages.')
+track_devices = safe_create Track.new(id: 0, major: major_cs, name: 'Devices', description: 'Create devices embedded in physical objects that interact in the physical world.')
+track_info_networks = safe_create Track.new(id: 1, major: major_cs, name: 'Information Internetworks', description: 'Represent, transform, transmit, and present data.')
+track_intelligence = safe_create Track.new(id: 2, major: major_cs, name: 'Intelligence', description: 'Build top-to-bottom models of rational agents and human-level intelligence.')
+track_media = safe_create Track.new(id: 3, major: major_cs, name: 'Media', description: 'Build systems to exploit computing\'s abilities to provide creative outlets.')
+track_modsim = safe_create Track.new(id: 4, major: major_cs, name: 'Modeling & Simulation', description: 'Represent natural and physical processes')
+track_people = safe_create Track.new(id: 5, major: major_cs, name: 'People', description: 'Design, build, and evaluate systems that treat humans as the central component.')
+track_systems_arch = safe_create Track.new(id: 6, major: major_cs, name: 'Systems & Architecture', description: 'Create computer architectures, systems, and languages.')
+track_theory = safe_create Track.new(id: 7, major: major_cs, name: 'Theory', description: 'Discover the theoretical foundations underlying a wide range of computing disciplines.')
 
 # Courses
 course_group_humanities = safe_create CourseGroup.new(id: 0, name: 'Humanities')
