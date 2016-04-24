@@ -4,7 +4,7 @@ class TrackController < ApplicationController
     render json: tracks
   end
 
-  def add_tracks
+  def update
     track_ids = params[:_json].collect { |track_data| track_data[:id] }
     tracks = Track.find track_ids
     current_user.tracks.destroy_all
