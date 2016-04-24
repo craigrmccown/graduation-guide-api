@@ -15,6 +15,7 @@ class CreateRequirements < ActiveRecord::Migration
       t.integer :course_id
       t.integer :quantity
       t.string :rule_type
+      t.integer :priority, null: false
       t.timestamps null: false
     end
 

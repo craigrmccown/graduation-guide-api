@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :majors
   has_and_belongs_to_many :minors
   has_and_belongs_to_many :tracks
+  has_and_belongs_to_many :courses
 
   def password=(plaintext)
     self.encrypted_password = Password.create(plaintext, :cost => 5).to_s
@@ -31,6 +32,7 @@ class User < ActiveRecord::Base
     roles << Role[:student]
     save!
   end
+
 
   def requirement_tree
     lookup = {}
@@ -93,12 +95,9 @@ class User < ActiveRecord::Base
     end
 
     roots = requirements.select { |requirement| requirement.parent_id.nil? }
-    roots.each { |root| root.load! Course.all }
 
     self.courses.each do |course|
-      roots.each do |root|
-        break if root.evaluate! course
-      end
+      roots.each { |root| root.evaluate! course }
     end
 
     roots

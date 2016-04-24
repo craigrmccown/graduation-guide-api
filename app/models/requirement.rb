@@ -1,13 +1,27 @@
 class Requirement < ActiveRecord::Base
+  # TODO use polymorphism
+
   include JsonSupport
+
+  attr_reader :is_satisfied
+  attr_reader :children
 
   json_embed :is_satisfied, :courses
   json_ignore :op
 
   has_many :requirement_rules
 
-  def children
-    @children ||= []
+  def after_initialize
+    @children = []
+    @is_satisfied = false
+  end
+
+  def <=>(node)
+    self.priority <=> node.priority
+  end
+
+  def nodes
+    @nodes ||= (@children + self.requirement_rules).sort
   end
 
   def courses
@@ -16,29 +30,21 @@ class Requirement < ActiveRecord::Base
     rule_courses + child_courses
   end
 
-  def load!(courses)
-    courses.each do |course|
-      self.requirement_rules.each { |rule| rule.load! course }
-    end
-
-    @children.each do |child|
-      child.load! courses
-    end
-  end
-  
   def evaluate!(course)
-    @children.any? { |child| child.evaluate! } or self.requirement_rules.any? { |rule| rule.evaluate course }
-  end
+    unsatisfied = nodes.select { |node| not node.satisfied? }
 
-  def satisfied?
     if self.op == 'and'
-      @children.all? { |child| child.satisfied? } and self.requirement_rules.all? { |rule| rule.satisfied? }
+      unsatisfied.each do |node|
+        node.evaluate! course
+        break if node.satisfied?
+      end
+
+      @is_satisfied = nodes.all? { |node| node.satisfied? } 
     elsif self.op == 'or'
-      @children.any? { |child| child.satisfied? } or self.requirement_rules.any? { |rule| rule.satisfied? }
+      unsatisfied.each { |node| node.evaluate! course }
+      @is_satisfied = nodes.any? { |node| node.satisfied? } 
     else
-      false
-    end
   end
 
-  alias :satisfied? :is_satisfied
+  alias :is_satisfied, :satisfied?
 end

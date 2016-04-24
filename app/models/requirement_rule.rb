@@ -7,23 +7,19 @@ class RequirementRule < ActiveRecord::Base
   belongs_to :course
   has_many :courses, through: :course_group
 
-  def load!(course)
-    @relevant_courses = [] if @relevant_courses.nil?
+  def after_initialize
+    @is_satisfied = false
+    @num_courses = 0
+    @num_hours = 0
+    @course_completed = false
+    @num_any = 0
+  end
 
-    if self.rule_type.eql? 'courses'
-      @relevant_courses << course if self.courses.include? relevant_courses
-    elsif self.rule_type.eql? 'hours'
-      @relevant_courses << course if self.courses.include? relevant_courses
-    end
+  def <=>(node)
+    self.priority <=> node.priority
   end
 
   def evaluate!(course)
-    @is_satisfied = false if @is_satisfied.nil?
-    @num_courses = 0 if @num_courses.nil?
-    @num_hours = 0 if @num_hours.nil?
-    @course_completed = false if @course_completed.nil?
-    @num_any = 0 if @num_any.nil?
-
     if self.rule_type.eql? 'courses'
       evaluate_courses! course
     elsif self.rule_type.eql? 'hours'
@@ -32,37 +28,29 @@ class RequirementRule < ActiveRecord::Base
       evaluate_course! course
     elsif self.rule_type.eql? 'any'
       evaluate_any! course
-    else
-      false
     end
   end
 
   def satisfied?
     if self.rule_type.eql? 'courses'
-      @num_courses == self.quantity
+      @num_courses >= self.quantity
     elsif self.rule_type.eql? 'hours'
-      @num_hours == self.quantity
+      @num_hours >= self.quantity
     elsif self.rule_type.eql? 'course'
       @course_completed
     elsif self.rule_type.eql? 'any'
-      @num_any == self.quantity
-    else
-      false
+      @num_any >= self.quantity
     end
   end
 
   private
 
   def evaluate_courses!(course)
-    is_relevant = @relevant_courses.include? course
-    @num_courses += 1 if is_relevant
-    is_relevant
+    @num_courses += 1 if self.courses.include? course
   end
 
   def evaluate_hours!(course)
-    is_relevant = @relevant_courses.include? course
-    @num_hours += course.hours if is_relevant
-    is_relevant
+    @num_hours += course.hours if self.courses.include? course
   end
 
   def evaluate_course!(course)
