@@ -111,7 +111,6 @@ course_cs4400.update_attribute :prereq_id, prereq_cs4400.id
 prereq_math3012 = safe_create Prereq.new(id: 18, op: 'and', courses: [course_math1552])
 course_math3012.update_attribute :prereq_id, prereq_math3012.id
 
-
 # Requirements and rules
 # Humanities
 req_humanities = safe_create Requirement.new(id: 0, majors: [major_cs], priority: 0, op: 'and')
@@ -151,20 +150,26 @@ req_isye_stat = safe_create Requirement.new(id: 13, parent_id: req_stat.id, prio
 rule_isye2027 = safe_create RequirementRule.new(id: 17, requirement: req_isye_stat, priority: 0, rule_type: 'course', course: course_isye2027)
 rule_isye2028 = safe_create RequirementRule.new(id: 18, requirement: req_isye_stat, priority: 1, rule_type: 'course', course: course_isye2028)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Tracks
+req_cs1301 = safe_create Requirement.new(id: 14, tracks: [track_info_networks, track_systems_arch], priority: 9, op: 'and')
+rule_cs1301 = safe_create RequirementRule.new(id: 19, requirement: req_cs1301, priority: 0, rule_type: 'course', course: course_cs1301)
+req_cs1331 = safe_create Requirement.new(id: 15, tracks: [track_info_networks, track_systems_arch], priority: 10, op: 'and')
+rule_cs1331 = safe_create RequirementRule.new(id: 20, requirement: req_cs1331, priority: 0, rule_type: 'course', course: course_cs1331)
+req_cs1332 = safe_create Requirement.new(id: 16, tracks: [track_info_networks, track_systems_arch], priority: 11, op: 'and')
+rule_cs1332 = safe_create RequirementRule.new(id: 21, requirement: req_cs1332, priority: 0, rule_type: 'course', course: course_cs1332)
+req_cs2050 = safe_create Requirement.new(id: 17, tracks: [track_info_networks, track_systems_arch], priority: 12, op: 'and')
+rule_cs2050 = safe_create RequirementRule.new(id: 22, requirement: req_cs2050, priority: 0, rule_type: 'course', course: course_cs2050)
+req_cs2110 = safe_create Requirement.new(id: 18, tracks: [track_info_networks, track_systems_arch], priority: 13, op: 'and')
+rule_cs2110 = safe_create RequirementRule.new(id: 23, requirement: req_cs2110, priority: 0, rule_type: 'course', course: course_cs2110)
+req_cs2200 = safe_create Requirement.new(id: 19, tracks: [track_info_networks, track_systems_arch], priority: 14, op: 'and')
+rule_cs2200 = safe_create RequirementRule.new(id: 24, requirement: req_cs2200, priority: 0, rule_type: 'course', course: course_cs2200)
+req_cs2340 = safe_create Requirement.new(id: 20, tracks: [track_info_networks, track_systems_arch], priority: 15, op: 'and')
+rule_cs2340 = safe_create RequirementRule.new(id: 25, requirement: req_cs2340, priority: 0, rule_type: 'course', course: course_cs2340)
+req_cs3510 = safe_create Requirement.new(id: 21, tracks: [track_info_networks, track_systems_arch], priority: 16, op: 'and')
+rule_cs3510 = safe_create RequirementRule.new(id: 26, requirement: req_cs3510, priority: 0, rule_type: 'course', course: course_cs3510)
+req_cs3210 = safe_create Requirement.new(id: 22, tracks: [track_systems_arch], priority: 17, op: 'and')
+rule_cs3210 = safe_create RequirementRule.new(id: 27, requirement: req_cs3210, priority: 0, rule_type: 'course', course: course_cs3210)
+req_cs3220 = safe_create Requirement.new(id: 23, tracks: [track_systems_arch], priority: 18, op: 'and')
+rule_cs3220 = safe_create RequirementRule.new(id: 28, requirement: req_cs3220, priority: 0, rule_type: 'course', course: course_cs3220)
+req_info_management = safe_create Requirement.new(id: 24, tracks: [track_info_networks], priority: 19, op: 'and')
+rule_info_management = safe_create RequirementRule.new(id: 29, requirement: req_info_management, priority: 0, rule_type: 'courses', quantity: 2)
