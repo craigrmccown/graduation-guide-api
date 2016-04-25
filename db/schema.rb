@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160423024927) do
+ActiveRecord::Schema.define(version: 20160424124120) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -143,6 +143,17 @@ ActiveRecord::Schema.define(version: 20160423024927) do
 
   add_index "roles_users", ["user_id", "role_id"], name: "index_roles_users_on_user_id_and_role_id", unique: true, using: :btree
 
+  create_table "sections", force: :cascade do |t|
+    t.integer  "course_id",  null: false
+    t.integer  "crn",        null: false
+    t.string   "days",       null: false
+    t.integer  "start",      null: false
+    t.integer  "end",        null: false
+    t.string   "professor",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tracks", force: :cascade do |t|
     t.integer  "major_id",    null: false
     t.string   "name",        null: false
@@ -191,6 +202,7 @@ ActiveRecord::Schema.define(version: 20160423024927) do
   add_foreign_key "requirements_tracks", "tracks"
   add_foreign_key "roles_users", "roles"
   add_foreign_key "roles_users", "users"
+  add_foreign_key "sections", "courses"
   add_foreign_key "tracks", "majors"
   add_foreign_key "tracks_users", "tracks"
   add_foreign_key "tracks_users", "users"
